@@ -21,6 +21,7 @@ import (
 	"github.com/senorprogrammer/wtf/help"
 	"github.com/senorprogrammer/wtf/ipinfo"
 	"github.com/senorprogrammer/wtf/jira"
+	"github.com/senorprogrammer/wtf/markets"
 	"github.com/senorprogrammer/wtf/newrelic"
 	"github.com/senorprogrammer/wtf/opsgenie"
 	"github.com/senorprogrammer/wtf/power"
@@ -180,6 +181,7 @@ func makeWidgets(app *tview.Application, pages *tview.Pages) {
 	wtf.Config = Config
 	cryptolive.Config = Config
 	bittrex.Config = Config
+	markets.Config = Config
 
 	// Always in alphabetical order
 	Widgets = []wtf.Wtfable{
@@ -205,6 +207,7 @@ func makeWidgets(app *tview.Application, pages *tview.Pages) {
 		cryptolive.NewWidget(),
 		prettyweather.NewWidget(),
 		bittrex.NewWidget(),
+		markets.NewWidget(),
 	}
 
 	FocusTracker = wtf.FocusTracker{
