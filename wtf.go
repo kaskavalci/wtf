@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/senorprogrammer/wtf/markets"
+
 	"github.com/gdamore/tcell"
 	"github.com/olebedev/config"
 	"github.com/radovskyb/watcher"
@@ -21,7 +23,6 @@ import (
 	"github.com/senorprogrammer/wtf/help"
 	"github.com/senorprogrammer/wtf/ipinfo"
 	"github.com/senorprogrammer/wtf/jira"
-	"github.com/senorprogrammer/wtf/markets"
 	"github.com/senorprogrammer/wtf/newrelic"
 	"github.com/senorprogrammer/wtf/opsgenie"
 	"github.com/senorprogrammer/wtf/power"
@@ -122,6 +123,8 @@ func watchForConfigChanges(app *tview.Application, configFlag string, grid *tvie
 			select {
 			case <-watch.Event:
 				loadConfig(configFlag)
+				// Disable all widgets to stop scheduler goroutines and rmeove widgets from memory.
+				disableAllWidgets()
 				makeWidgets(app, pages)
 				grid = buildGrid(Widgets)
 				pages.AddPage("grid", grid, true, true)
@@ -156,18 +159,76 @@ var (
 	version = "dev"
 )
 
+func disableAllWidgets() {
+	for _, widget := range Widgets {
+		widget.Disable()
+	}
+}
+
+func addWidget(app *tview.Application, pages *tview.Pages, widgetName string) {
+	// Always in alphabetical order
+	switch widgetName {
+	case "bamboohr":
+		Widgets = append(Widgets, bamboohr.NewWidget())
+	case "bittrex":
+		Widgets = append(Widgets, bittrex.NewWidget())
+	case "clocks":
+		Widgets = append(Widgets, clocks.NewWidget())
+	case "cmdrunner":
+		Widgets = append(Widgets, cmdrunner.NewWidget())
+	case "cryptolive":
+		Widgets = append(Widgets, cryptolive.NewWidget())
+	case "gcal":
+		Widgets = append(Widgets, gcal.NewWidget())
+	case "git":
+		Widgets = append(Widgets, git.NewWidget(app, pages))
+	case "github":
+		Widgets = append(Widgets, github.NewWidget(app, pages))
+	case "ipinfo":
+		Widgets = append(Widgets, ipinfo.NewWidget())
+	case "jira":
+		Widgets = append(Widgets, jira.NewWidget())
+	case "markets":
+		Widgets = append(Widgets, markets.NewWidget())
+	case "newrelic":
+		Widgets = append(Widgets, newrelic.NewWidget())
+	case "opsgenie":
+		Widgets = append(Widgets, opsgenie.NewWidget())
+	case "power":
+		Widgets = append(Widgets, power.NewWidget())
+	case "prettyweather":
+		Widgets = append(Widgets, prettyweather.NewWidget())
+	case "security":
+		Widgets = append(Widgets, security.NewWidget())
+	case "status":
+		Widgets = append(Widgets, status.NewWidget())
+	case "system":
+		Widgets = append(Widgets, system.NewWidget(date, version))
+	case "textfile":
+		Widgets = append(Widgets, textfile.NewWidget(app, pages))
+	case "todo":
+		Widgets = append(Widgets, todo.NewWidget(app, pages))
+	case "weather":
+		Widgets = append(Widgets, weather.NewWidget(app, pages))
+	default:
+	}
+}
+
 func makeWidgets(app *tview.Application, pages *tview.Pages) {
+	Widgets = []wtf.Wtfable{}
+
 	// Always in alphabetical order
 	bamboohr.Config = Config
+	bittrex.Config = Config
 	clocks.Config = Config
 	cmdrunner.Config = Config
-	wtf.Config = Config
 	cryptolive.Config = Config
 	gcal.Config = Config
 	git.Config = Config
 	github.Config = Config
 	ipinfo.Config = Config
 	jira.Config = Config
+	markets.Config = Config
 	newrelic.Config = Config
 	opsgenie.Config = Config
 	power.Config = Config
@@ -179,35 +240,12 @@ func makeWidgets(app *tview.Application, pages *tview.Pages) {
 	todo.Config = Config
 	weather.Config = Config
 	wtf.Config = Config
-	cryptolive.Config = Config
-	bittrex.Config = Config
-	markets.Config = Config
 
-	// Always in alphabetical order
-	Widgets = []wtf.Wtfable{
-		bamboohr.NewWidget(),
-		clocks.NewWidget(),
-		cmdrunner.NewWidget(),
-		cryptolive.NewWidget(),
-		gcal.NewWidget(),
-		git.NewWidget(app, pages),
-		github.NewWidget(app, pages),
-		ipinfo.NewWidget(),
-		jira.NewWidget(),
-		newrelic.NewWidget(),
-		opsgenie.NewWidget(),
-		power.NewWidget(),
-		prettyweather.NewWidget(),
-		security.NewWidget(),
-		status.NewWidget(),
-		system.NewWidget(date, version),
-		textfile.NewWidget(app, pages),
-		todo.NewWidget(app, pages),
-		weather.NewWidget(app, pages),
-		cryptolive.NewWidget(),
-		prettyweather.NewWidget(),
-		bittrex.NewWidget(),
-		markets.NewWidget(),
+	mods, _ := Config.Map("wtf.mods")
+	for mod := range mods {
+		if enabled, _ := Config.Bool("wtf.mods." + mod + ".enabled"); enabled {
+			addWidget(app, pages, mod)
+		}
 	}
 
 	FocusTracker = wtf.FocusTracker{
