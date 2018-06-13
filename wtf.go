@@ -13,6 +13,9 @@ import (
 	"github.com/radovskyb/watcher"
 	"github.com/rivo/tview"
 	"github.com/senorprogrammer/wtf/bamboohr"
+	"github.com/senorprogrammer/wtf/bargraph"
+	"github.com/senorprogrammer/wtf/cfg"
+	"github.com/senorprogrammer/wtf/circleci"
 	"github.com/senorprogrammer/wtf/clocks"
 	"github.com/senorprogrammer/wtf/cmdrunner"
 	"github.com/senorprogrammer/wtf/cryptoexchanges/bittrex"
@@ -20,8 +23,10 @@ import (
 	"github.com/senorprogrammer/wtf/gcal"
 	"github.com/senorprogrammer/wtf/git"
 	"github.com/senorprogrammer/wtf/github"
+	"github.com/senorprogrammer/wtf/gspreadsheets"
 	"github.com/senorprogrammer/wtf/help"
 	"github.com/senorprogrammer/wtf/ipinfo"
+	"github.com/senorprogrammer/wtf/ipapi"
 	"github.com/senorprogrammer/wtf/jira"
 	"github.com/senorprogrammer/wtf/newrelic"
 	"github.com/senorprogrammer/wtf/opsgenie"
@@ -170,8 +175,12 @@ func addWidget(app *tview.Application, pages *tview.Pages, widgetName string) {
 	switch widgetName {
 	case "bamboohr":
 		Widgets = append(Widgets, bamboohr.NewWidget())
+	case "bargraph":
+		Widgets = append(Widgets, bargraph.NewWidget())
 	case "bittrex":
 		Widgets = append(Widgets, bittrex.NewWidget())
+	case "circleci":
+		Widgets = append(Widgets, circleci.NewWidget())
 	case "clocks":
 		Widgets = append(Widgets, clocks.NewWidget())
 	case "cmdrunner":
@@ -184,8 +193,12 @@ func addWidget(app *tview.Application, pages *tview.Pages, widgetName string) {
 		Widgets = append(Widgets, git.NewWidget(app, pages))
 	case "github":
 		Widgets = append(Widgets, github.NewWidget(app, pages))
+	case "gspreadsheets":
+		Widgets = append(Widgets, gspreadsheets.NewWidget())
 	case "ipinfo":
 		Widgets = append(Widgets, ipinfo.NewWidget())
+	case "ipapi":
+		Widgets = append(Widgets, ipapi.NewWidget())
 	case "jira":
 		Widgets = append(Widgets, jira.NewWidget())
 	case "markets":
@@ -219,14 +232,18 @@ func makeWidgets(app *tview.Application, pages *tview.Pages) {
 
 	// Always in alphabetical order
 	bamboohr.Config = Config
+	bargraph.Config = Config
 	bittrex.Config = Config
+	circleci.Config = Config
 	clocks.Config = Config
 	cmdrunner.Config = Config
 	cryptolive.Config = Config
 	gcal.Config = Config
 	git.Config = Config
 	github.Config = Config
+	gspreadsheets.Config = Config
 	ipinfo.Config = Config
+	ipapi.Config = Config
 	jira.Config = Config
 	markets.Config = Config
 	newrelic.Config = Config
@@ -246,6 +263,7 @@ func makeWidgets(app *tview.Application, pages *tview.Pages) {
 		if enabled, _ := Config.Bool("wtf.mods." + mod + ".enabled"); enabled {
 			addWidget(app, pages, mod)
 		}
+
 	}
 
 	FocusTracker = wtf.FocusTracker{
@@ -256,7 +274,7 @@ func makeWidgets(app *tview.Application, pages *tview.Pages) {
 }
 
 func loadConfig(configFlag string) {
-	Config = wtf.LoadConfigFile(configFlag)
+	Config = cfg.LoadConfigFile(configFlag)
 }
 
 func main() {
@@ -273,8 +291,8 @@ func main() {
 
 	// Responsible for creating the configuration directory and default
 	// configuration file if they don't already exist
-	wtf.CreateConfigDir()
-	wtf.WriteConfigFile()
+	cfg.CreateConfigDir()
+	cfg.WriteConfigFile()
 
 	loadConfig(cmdFlags.Config)
 	os.Setenv("TERM", Config.UString("wtf.term", os.Getenv("TERM")))
@@ -298,4 +316,6 @@ func main() {
 		fmt.Printf("An error occurred: %v\n", err)
 		os.Exit(1)
 	}
+
+	wtf.Log("running!")
 }
