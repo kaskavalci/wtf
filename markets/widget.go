@@ -52,7 +52,7 @@ func (widget *Widget) Refresh() {
 	}
 
 	widget.UpdateRefreshedAt()
-	widget.ipinfo()
+	widget.update()
 	widget.View.Clear()
 
 	widget.View.SetText(widget.result)
@@ -86,8 +86,8 @@ func (widget *Widget) get(url string) ([]data, error) {
 	return info, nil
 }
 
-//this method reads the config and calls ipinfo for ip information
-func (widget *Widget) ipinfo() {
+// update markets from sources
+func (widget *Widget) update() {
 	goldList, err := widget.get("https://www.doviz.com/api/v1/golds/all/latest")
 	if err != nil {
 		widget.result = fmt.Sprintf("%s", err.Error())
