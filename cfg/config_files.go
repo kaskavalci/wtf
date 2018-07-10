@@ -6,11 +6,53 @@ import (
 	"os"
 
 	"github.com/olebedev/config"
+	"github.com/senorprogrammer/wtf/logger"
 	"github.com/senorprogrammer/wtf/wtf"
 )
 
+const CONFIG_DIR_V1 = "~/.wtf/"
+const CONFIG_DIR_V2 = "~/.config/wtf/"
+
+/* -------------------- Config Migration -------------------- */
+
+// MigrateOldConfig copies any existing configuration from the old location
+// to the new, XDG-compatible location
+func MigrateOldConfig() {
+	srcDir, _ := wtf.ExpandHomeDir(CONFIG_DIR_V1)
+	destDir, _ := wtf.ExpandHomeDir(CONFIG_DIR_V2)
+
+	// If the old config directory doesn't exist, do not move
+	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
+		return
+	}
+
+	// If the new config directory already exists, do not move
+	if _, err := os.Stat(destDir); err == nil {
+		return
+	}
+
+	// Time to move
+	err := Copy(srcDir, destDir)
+	if err != nil {
+		panic(err)
+	} else {
+		logger.Log(fmt.Sprintf("Copied old config from %s to %s", srcDir, destDir))
+	}
+
+	// Delete the old directory if the new one exists
+	if _, err := os.Stat(destDir); err == nil {
+		err := os.RemoveAll(srcDir)
+		if err != nil {
+			logger.Log(err.Error())
+		}
+	}
+}
+
+/* -------------------- Config Migration -------------------- */
+
+// ConfigDir returns the absolute path to the configuration directory
 func ConfigDir() (string, error) {
-	configDir, err := wtf.ExpandHomeDir("~/.wtf/")
+	configDir, err := wtf.ExpandHomeDir(CONFIG_DIR_V2)
 	if err != nil {
 		return "", err
 	}
@@ -18,13 +60,31 @@ func ConfigDir() (string, error) {
 	return configDir, nil
 }
 
-// CreateConfigDir creates the .wtf directory in the user's home dir
+// CreateConfigDir creates the wtf/ directory in the user's home dir
 func CreateConfigDir() {
 	configDir, _ := ConfigDir()
 
 	if _, err := os.Stat(configDir); os.IsNotExist(err) {
 		err := os.Mkdir(configDir, os.ModePerm)
 		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+// CreateConfigFile creates a simple config file in the config directory if
+// one does not already exist
+func CreateConfigFile() {
+	filePath, err := CreateFile("config.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	// If the file is empty, write to it
+	file, _ := os.Stat(filePath)
+
+	if file.Size() == 0 {
+		if ioutil.WriteFile(filePath, []byte(simpleConfig), 0644) != nil {
 			panic(err)
 		}
 	}
@@ -64,47 +124,12 @@ func LoadConfigFile(filePath string) *config.Config {
 
 	cfg, err := config.ParseYamlFile(absPath)
 	if err != nil {
-		fmt.Println("\n\n\033[1m ERROR:\033[0m Could not load '\033[0;33mconfig.yml\033[0m'.\n Please add a \033[0;33mconfig.yml\033[0m file to your \033[0;33m~/.wtf\033[0m directory.\n See \033[1;34mhttps://github.com/senorprogrammer/wtf\033[0m for details.\n")
+		fmt.Println("\n\n\033[1m ERROR:\033[0m Could not load '\033[0;33mconfig.yml\033[0m'.\n Please add a \033[0;33mconfig.yml\033[0m file to your \033[0;33m~/.wtf\033[0m directory.\n See \033[1;34mhttps://github.com/senorprogrammer/wtf\033[0m for details.")
 		fmt.Printf(" %s\n", err.Error())
 		os.Exit(1)
 	}
 
 	return cfg
-}
-
-func ReadConfigFile(fileName string) (string, error) {
-	configDir, err := ConfigDir()
-	if err != nil {
-		return "", err
-	}
-
-	filePath := fmt.Sprintf("%s/%s", configDir, fileName)
-
-	fileData, err := wtf.ReadFileBytes(filePath)
-	if err != nil {
-		return "", err
-	}
-
-	return string(fileData), nil
-}
-
-// WriteConfigFile creates a simple config file in the config directory if
-// one does not already exist
-func WriteConfigFile() {
-	filePath, err := CreateFile("config.yml")
-	if err != nil {
-		panic(err)
-	}
-
-	// If the file is empty, write to it
-	file, err := os.Stat(filePath)
-
-	if file.Size() == 0 {
-		err = ioutil.WriteFile(filePath, []byte(simpleConfig), 0644)
-		if err != nil {
-			panic(err)
-		}
-	}
 }
 
 const simpleConfig = `wtf:
@@ -163,7 +188,7 @@ const simpleConfig = `wtf:
       refreshInterval: 3600
     textfile:
       enabled: true
-      filePath: "~/.wtf/config.yml"
+      filePath: "~/.config/wtf/config.yml"
       position:
         top: 1
         left: 1

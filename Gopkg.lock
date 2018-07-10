@@ -4,14 +4,32 @@
 [[projects]]
   name = "cloud.google.com/go"
   packages = ["compute/metadata"]
-  revision = "0fd7230b2a7505833d5f69b75cbd6c9582401479"
-  version = "v0.23.0"
+  revision = "777200caa7fb8936aed0f12b1fd79af64cc83ec9"
+  version = "v0.24.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/adlio/trello"
+  packages = ["."]
+  revision = "8a458717123e328d9103a3bf075e64bc1ec961f8"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/andygrunwald/go-gerrit"
+  packages = ["."]
+  revision = "5ea603106b4869cc3f38322ee17d5fc1360ee1e3"
 
 [[projects]]
   branch = "master"
   name = "github.com/briandowns/openweathermap"
   packages = ["."]
-  revision = "2adae1e5d10290d8cd435bd30296fc5e8f754862"
+  revision = "6a9abf92e34f4de62ac671caee3143f10b98892d"
+
+[[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -29,12 +47,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  name = "github.com/go-test/deep"
-  packages = ["."]
-  revision = "6592d9cc0a499ad2d5f574fde80a2b5c5cc3b4f5"
-  version = "v1.0.1"
-
-[[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto"]
   revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
@@ -44,7 +56,7 @@
   branch = "master"
   name = "github.com/google/go-github"
   packages = ["github"]
-  revision = "2ae5df7848328c214a48cec94c7d410cf8526527"
+  revision = "60d040d2dafa18fa3e86cbf22fbc3208ef9ef1e0"
 
 [[projects]]
   branch = "master"
@@ -74,7 +86,19 @@
   branch = "master"
   name = "github.com/olebedev/config"
   packages = ["."]
-  revision = "9a10d05a33a8b9e828f20491e21e8927dec35f72"
+  revision = "ed90d2035b8114c30b9cb65e7d52e10a7148f8c6"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/radovskyb/watcher"
@@ -86,13 +110,25 @@
   branch = "master"
   name = "github.com/rivo/tview"
   packages = ["."]
-  revision = "71ecf1f4299c6d72b16d20da72405b7e85ac8720"
+  revision = "83483397e826c343edb7b8c1f33fb7983dda9fc5"
+
+[[projects]]
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/xanzy/go-gitlab"
+  packages = ["."]
+  revision = "6ada444068f460636db26ca0dd66cf2aa518fa8f"
 
 [[projects]]
   branch = "master"
   name = "github.com/yfronto/newrelic"
   packages = ["."]
-  revision = "f7fa0c6f30ac3d86360c73726cfe9dd526a63d21"
+  revision = "7c9c2852e8f9e69a80bff4f4f1fe4cdd15eeba19"
 
 [[projects]]
   branch = "master"
@@ -101,7 +137,7 @@
     "context",
     "context/ctxhttp"
   ]
-  revision = "1e491301e022f8f977054da4c2d852decd59571f"
+  revision = "e514e69ffb8bc3c76a71ae40de0118d794855992"
 
 [[projects]]
   branch = "master"
@@ -113,7 +149,7 @@
     "jws",
     "jwt"
   ]
-  revision = "1e0a3fa8ba9a5c9eb35c271780101fdaf1b205d7"
+  revision = "ef147856a6ddbb60760db74283d2424e98c87bff"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -134,9 +170,10 @@
     "calendar/v3",
     "gensupport",
     "googleapi",
-    "googleapi/internal/uritemplates"
+    "googleapi/internal/uritemplates",
+    "sheets/v4"
   ]
-  revision = "00e3bb8d04691e25ee2fccf98c866bcb7925c3ec"
+  revision = "082d671a2a341aa205b22b580fa69747dcc3cdc8"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -152,8 +189,8 @@
     "internal/urlfetch",
     "urlfetch"
   ]
-  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
-  version = "v1.0.0"
+  revision = "b1f26356af11148e710935ed1ac8a7f5702c7612"
+  version = "v1.1.0"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
@@ -164,6 +201,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b0e632406212933c5f4d7652db7aa06e63f4ed94d38ceb823e5c51b865c20be0"
+  inputs-digest = "a7a00554f9040d7617458773eafa64b82f9502eace145152cb50eb082800e936"
   solver-name = "gps-cdcl"
   solver-version = 1
