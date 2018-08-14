@@ -17,11 +17,6 @@ width="320" height="68" alt="jenkins screenshot" />
 wtf/jenkins/
 ```
 
-## Required ENV Variables
-
-<span class="caption">Key:</span> `WTF_JENKINS_API_KEY` <br />
-<span class="caption">Value:</span> Your <a href="https://wiki.jenkins.io/display/JENKINS/Remote+access+API">Jenkins API</a> key.
-
 ## Keyboard Commands
 
 None.
@@ -30,6 +25,7 @@ None.
 
 ```yaml
 jenkins:
+  apiKey: "3276d7155dd9ee27b8b14f8743a408a9"
   enabled: true
   position:
     top: 2
@@ -39,9 +35,13 @@ jenkins:
   refreshInterval: 300
   url: "https://jenkins.domain.com/jenkins/view_url"
   user: "username"
+  verifyServerCertificate: true
 ```
 
 ### Attributes
+
+`apiKey` <br />
+Value: Your <a href="https://wiki.jenkins.io/display/JENKINS/Remote+access+API">Jenkins API</a> key.
 
 `enabled` <br />
 Determines whether or not this module is executed and if its data displayed onscreen. <br />
@@ -61,3 +61,7 @@ Your Jenkins username. <br />
 The url to your Jenkins project or view. <br />
 Values: A valid URI.
 
+`verifyServerCertificate` <br />
+_Optional_ <br />
+Determines whether or not the server's certificate chain and host name are verified. <br />
+Values: `true`, `false`.

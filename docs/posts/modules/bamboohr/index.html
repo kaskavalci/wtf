@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
 
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="generator" content="Hugo 0.46" />
 
 <title>BambooHR | WTF - A Terminal Dashboard</title>
 <meta content="BambooHR - WTF - A Terminal Dashboard" property="og:title">
@@ -82,10 +82,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li class="sidebar-list-item-2"><a href="/posts/modules/clocks/">Clocks</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/cryptocurrencies/cryptolive/">CryptoLive</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/cmdrunner/">CmdRunner</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/hackernews/">Hacker News</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/gerrit/">Gerrit</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/git/">Git</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/github/">GitHub</a></li>
-        <li class="sidebar-list-item-2"><a href="/posts/modules/gitlab/">Gitlab</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/gitlab/">GitLab</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/gitter/">Gitter</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/gcal/">Google Calendar</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/gspreadsheet">Google Spreadsheet</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/ipapi/">IP-API</a></li>
@@ -100,8 +102,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li class="sidebar-list-item-2"><a href="/posts/modules/security/">Security</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/textfile/">Text File</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/todo/">Todo</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/todoist/">Todoist</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/travisci/">Travis CI</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/trello/">Trello</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/weather/">Weather</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/zendesk/">Zendesk</a></li>
       </ul>
     </div>
 
@@ -138,31 +143,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <h2 id="source-code">Source Code</h2>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">wtf/bamboohr/</code></pre></div>
-<h2 id="required-env-variables">Required ENV Variables</h2>
-
-<p><span class="caption">Key:</span> <code>WTF_BAMBOO_HR_TOKEN</code> <br />
-<span class="caption">Value:</span> Your <a href="https://www.bamboohr.com/api/documentation/">BambooHR API</a> token.</p>
-
-<p><span class="caption">Key:</span> <code>WTF_BAMBOO_HR_SUBDOMAIN</code> <br />
-<span class="caption">Value:</span> Your <a href="https://www.bamboohr.com/api/documentation/">BambooHR API</a> subdomain name.</p>
-
 <h2 id="keyboard-commands">Keyboard Commands</h2>
 
 <p>None.</p>
 
 <h2 id="configuration">Configuration</h2>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">bamboohr<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apiKey<span class="p">:</span><span class="w"> </span><span class="s2">&#34;3276d7155dd9ee27b8b14f8743a408a9&#34;</span><span class="w">
 </span><span class="w">  </span>enabled<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="w">  </span>position<span class="p">:</span><span class="w">
 </span><span class="w">    </span>top<span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="w">
 </span><span class="w">    </span>left<span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
 </span><span class="w">    </span>height<span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
 </span><span class="w">    </span>width<span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span><span class="w">  </span>refreshInterval<span class="p">:</span><span class="w"> </span><span class="m">900</span></code></pre></div>
+</span><span class="w">  </span>refreshInterval<span class="p">:</span><span class="w"> </span><span class="m">900</span><span class="w">
+</span><span class="w">  </span>subdomain<span class="p">:</span><span class="w"> </span><span class="s2">&#34;testco&#34;</span></code></pre></div>
 <h3 id="attributes">Attributes</h3>
 
+<p><code>apiKey</code> <br />
+Value: Your <a href="https://www.bamboohr.com/api/documentation/">BambooHR API</a> token.</p>
+
 <p><code>enabled</code> <br />
-Determines whether or not this module is executed and if its data displayed onscreen. <br />
+Whether or not this module is executed and if its data displayed onscreen. <br />
 Values: <code>true</code>, <code>false</code>.</p>
 
 <p><code>position</code> <br />
@@ -171,6 +173,9 @@ Defines where in the grid this module&rsquo;s widget will be displayed. <br /></
 <p><code>refreshInterval</code> <br />
 How often, in seconds, this module will update its data. <br />
 Values: Any positive integer, <code>0..n</code>.</p>
+
+<p><code>subdomain</code> <br />
+Value: Your <a href="https://www.bamboohr.com/api/documentation/">BambooHR API</a> subdomain name.</p>
 
 </div>
 

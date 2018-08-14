@@ -13,6 +13,7 @@ var Config *config.Config
 type TextWidget struct {
 	enabled   bool
 	focusable bool
+	focusChar string
 
 	Name        string
 	RefreshedAt time.Time
@@ -53,6 +54,14 @@ func (widget *TextWidget) BorderColor() string {
 	return Config.UString("wtf.colors.border.normal", "gray")
 }
 
+func (widget *TextWidget) ContextualTitle(defaultStr string) string {
+	if widget.FocusChar() == "" {
+		return fmt.Sprintf(" %s ", defaultStr)
+	}
+
+	return fmt.Sprintf(" %s [darkgray::u]%s[::-][green] ", defaultStr, widget.FocusChar())
+}
+
 func (widget *TextWidget) Disable() {
 	widget.enabled = false
 }
@@ -69,8 +78,16 @@ func (widget *TextWidget) Focusable() bool {
 	return widget.enabled && widget.focusable
 }
 
+func (widget *TextWidget) FocusChar() string {
+	return widget.focusChar
+}
+
 func (widget *TextWidget) RefreshInterval() int {
 	return widget.RefreshInt
+}
+
+func (widget *TextWidget) SetFocusChar(char string) {
+	widget.focusChar = char
 }
 
 func (widget *TextWidget) TextView() *tview.TextView {
@@ -82,11 +99,11 @@ func (widget *TextWidget) TextView() *tview.TextView {
 func (widget *TextWidget) addView() {
 	view := tview.NewTextView()
 
-	view.SetBackgroundColor(ColorFor(Config.UString("wtf.colors.background", "black")))
+	view.SetBackgroundColor(colorFor(Config.UString("wtf.colors.background", "black")))
 	view.SetBorder(true)
-	view.SetBorderColor(ColorFor(widget.BorderColor()))
+	view.SetBorderColor(colorFor(widget.BorderColor()))
 	view.SetDynamicColors(true)
-	view.SetTitle(widget.Name)
+	view.SetTitle(widget.ContextualTitle(widget.Name))
 	view.SetWrap(false)
 
 	widget.View = view

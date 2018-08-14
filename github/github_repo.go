@@ -6,6 +6,7 @@ import (
 	"os"
 
 	ghb "github.com/google/go-github/github"
+	"github.com/senorprogrammer/wtf/wtf"
 	"golang.org/x/oauth2"
 )
 
@@ -22,13 +23,11 @@ type GithubRepo struct {
 
 func NewGithubRepo(name, owner string) *GithubRepo {
 	repo := GithubRepo{
-		apiKey:    os.Getenv("WTF_GITHUB_TOKEN"),
-		baseURL:   os.Getenv("WTF_GITHUB_BASE_URL"),
-		uploadURL: os.Getenv("WTF_GITHUB_UPLOAD_URL"),
-
 		Name:  name,
 		Owner: owner,
 	}
+
+	repo.loadAPICredentials()
 
 	return &repo
 }
@@ -91,6 +90,23 @@ func (repo *GithubRepo) githubClient() (*ghb.Client, error) {
 	return ghb.NewClient(oauthClient), nil
 }
 
+func (repo *GithubRepo) loadAPICredentials() {
+	repo.apiKey = wtf.Config.UString(
+		"wtf.mods.github.apiKey",
+		os.Getenv("WTF_GITHUB_TOKEN"),
+	)
+
+	repo.baseURL = wtf.Config.UString(
+		"wtf.mods.github.baseURL",
+		os.Getenv("WTF_GITHUB_BASE_URL"),
+	)
+
+	repo.uploadURL = wtf.Config.UString(
+		"wtf.mods.github.uploadURL",
+		os.Getenv("WTF_GITHUB_UPLOAD_URL"),
+	)
+}
+
 // myPullRequests returns a list of pull requests created by username on this repo
 func (repo *GithubRepo) myPullRequests(username string) []*ghb.PullRequest {
 	prs := []*ghb.PullRequest{}
@@ -103,7 +119,33 @@ func (repo *GithubRepo) myPullRequests(username string) []*ghb.PullRequest {
 		}
 	}
 
+	if showStatus() {
+		prs = repo.individualPRs(prs)
+	}
+
 	return prs
+}
+
+// individualPRs takes a list of pull requests (presumably returned from
+// github.PullRequests.List) and fetches them individually to get more detailed
+// status info on each. see: https://developer.github.com/v3/git/#checking-mergeability-of-pull-requests
+func (repo *GithubRepo) individualPRs(prs []*ghb.PullRequest) []*ghb.PullRequest {
+	github, err := repo.githubClient()
+	if err != nil {
+		return prs
+	}
+
+	var ret []*ghb.PullRequest
+	for i := range prs {
+		pr, _, err := github.PullRequests.Get(context.Background(), repo.Owner, repo.Name, prs[i].GetNumber())
+		if err != nil {
+			// worst case, just keep the original one
+			ret = append(ret, prs[i])
+		} else {
+			ret = append(ret, pr)
+		}
+	}
+	return ret
 }
 
 // myReviewRequests returns a list of pull requests for which username has been

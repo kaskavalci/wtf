@@ -81,7 +81,8 @@ func NamesFromEmails(emails []string) []string {
 // OpenFile opens the file defined in `path` via the operating system
 func OpenFile(path string) {
 	filePath, _ := ExpandHomeDir(path)
-	cmd := exec.Command("open", filePath)
+	openFileUtil := Config.UString("wtf.openFileUtil", "open")
+	cmd := exec.Command(openFileUtil, filePath)
 
 	ExecuteCommand(cmd)
 }
@@ -112,21 +113,28 @@ func RightAlignFormat(view *tview.TextView) string {
 	return fmt.Sprintf("%%%ds", w-1)
 }
 
+func DefaultFocussedRowColor() string {
+	foreColor := Config.UString("wtf.colors.highlight.fore", "black")
+	backColor := Config.UString("wtf.colors.highlight.back", "orange")
+
+	return fmt.Sprintf("%s:%s", foreColor, backColor)
+}
+
 func RowColor(module string, idx int) string {
-	evenKey := fmt.Sprintf("wtf.mods.%s.colors.row.even", module)
-	oddKey := fmt.Sprintf("wtf.mods.%s.colors.row.odd", module)
+	evenKey := fmt.Sprintf("wtf.mods.%s.colors.rows.even", module)
+	oddKey := fmt.Sprintf("wtf.mods.%s.colors.rows.odd", module)
 
 	if idx%2 == 0 {
 		return Config.UString(evenKey, "white")
-	} else {
-		return Config.UString(oddKey, "lightblue")
 	}
+
+	return Config.UString(oddKey, "lightblue")
 }
 
 func SigilStr(len, pos int, view *tview.TextView) string {
 	sigils := ""
 
-	if len > 0 {
+	if len > 1 {
 		sigils = strings.Repeat(Config.UString("wtf.paging.pageSigil", "*"), pos)
 		sigils = sigils + Config.UString("wtf.paging.selectedSigil", "_")
 		sigils = sigils + strings.Repeat(Config.UString("wtf.paging.pageSigil", "*"), len-1-pos)

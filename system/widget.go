@@ -17,7 +17,7 @@ type Widget struct {
 
 func NewWidget(date, version string) *Widget {
 	widget := Widget{
-		TextWidget: wtf.NewTextWidget(" System ", "system", false),
+		TextWidget: wtf.NewTextWidget("System", "system", false),
 
 		Date:    date,
 		Version: version,
@@ -48,9 +48,10 @@ func (widget *Widget) Refresh() {
 
 func (widget *Widget) prettyDate() string {
 	str, err := time.Parse(wtf.TimestampFormat, widget.Date)
+
 	if err != nil {
 		return err.Error()
-	} else {
-		return str.Format("Jan _2, 15:04")
 	}
+
+	return str.Format("Jan _2, 15:04")
 }

@@ -14,14 +14,22 @@ Displays all Jira issues assigned to you for the specified project.
 wtf/jira/
 ```
 
-## Required ENV Variables
-
-<span class="caption">Key:</span> `WTF_JIRA_API_KEY` <br />
-<span class="caption">Value:</span> Your <a href="https://confluence.atlassian.com/cloud/api-tokens-938839638.html">Jira API</a> key.
-
 ## Keyboard Commands
 
-None.
+<span class="caption">Key:</span> `[return]` <br />
+<span class="caption">Action:</span> Open the selected issue in the browser.
+
+<span class="caption">Key:</span> `j` <br />
+<span class="caption">Action:</span> Select the next item in the list.
+
+<span class="caption">Key:</span> `k` <br />
+<span class="caption">Action:</span> Select the previous item in the list.
+
+<span class="caption">Key:</span> `↓` <br />
+<span class="caption">Action:</span> Select the next item in the list.
+
+<span class="caption">Key:</span> `↑` <br />
+<span class="caption">Action:</span> Select the previous item in the list.
 
 ## Configuration
 
@@ -29,6 +37,7 @@ None.
 
 ```yaml
 jira:
+  apiKey: "3276d7155dd9ee27b8b14f8743a408a9"
   colors:
     rows:
       even: "lightblue"
@@ -55,6 +64,7 @@ configuration (note the difference in `project`):
 
 ```yaml
 jira:
+  apiKey: "3276d7155dd9ee27b8b14f8743a408a9"
   colors:
     rows:
       even: "lightblue"
@@ -75,6 +85,9 @@ jira:
 ```
 
 ### Attributes
+
+`apiKey` <br />
+Value: Your <a href="https://confluence.atlassian.com/cloud/api-tokens-938839638.html">Jira API</a> key.
 
 `colors.rows.even` <br />
 Define the foreground color for even-numbered rows. <br />

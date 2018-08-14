@@ -13,7 +13,7 @@ type Widget struct {
 
 func NewWidget() *Widget {
 	widget := Widget{
-		TextWidget: wtf.NewTextWidget(" OpsGenie ", "opsgenie", false),
+		TextWidget: wtf.NewTextWidget("OpsGenie", "opsgenie", false),
 	}
 
 	return &widget
@@ -25,7 +25,7 @@ func (widget *Widget) Refresh() {
 	data, err := Fetch()
 
 	widget.UpdateRefreshedAt()
-	widget.View.SetTitle(widget.Name)
+	widget.View.SetTitle(widget.ContextualTitle(widget.Name))
 
 	var content string
 	if err != nil {

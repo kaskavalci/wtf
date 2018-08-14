@@ -13,7 +13,7 @@ type Widget struct {
 
 func NewWidget() *Widget {
 	widget := Widget{
-		TextWidget: wtf.NewTextWidget(" New Relic ", "newrelic", false),
+		TextWidget: wtf.NewTextWidget("New Relic", "newrelic", false),
 	}
 
 	return &widget
@@ -31,7 +31,7 @@ func (widget *Widget) Refresh() {
 	}
 
 	widget.UpdateRefreshedAt()
-	widget.View.SetTitle(fmt.Sprintf("%s- [green]%s[white]", widget.Name, appName))
+	widget.View.SetTitle(widget.ContextualTitle(fmt.Sprintf("%s - [green]%s[white]", widget.Name, appName)))
 	widget.View.Clear()
 
 	var content string

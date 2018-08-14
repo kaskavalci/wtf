@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
 
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="generator" content="Hugo 0.46" />
 
 <title>GitHub | WTF - A Terminal Dashboard</title>
 <meta content="GitHub - WTF - A Terminal Dashboard" property="og:title">
@@ -82,10 +82,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li class="sidebar-list-item-2"><a href="/posts/modules/clocks/">Clocks</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/cryptocurrencies/cryptolive/">CryptoLive</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/cmdrunner/">CmdRunner</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/hackernews/">Hacker News</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/gerrit/">Gerrit</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/git/">Git</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/github/">GitHub</a></li>
-        <li class="sidebar-list-item-2"><a href="/posts/modules/gitlab/">Gitlab</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/gitlab/">GitLab</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/gitter/">Gitter</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/gcal/">Google Calendar</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/gspreadsheet">Google Spreadsheet</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/ipapi/">IP-API</a></li>
@@ -100,8 +102,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li class="sidebar-list-item-2"><a href="/posts/modules/security/">Security</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/textfile/">Text File</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/todo/">Todo</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/todoist/">Todoist</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/travisci/">Travis CI</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/trello/">Trello</a></li>
         <li class="sidebar-list-item-2"><a href="/posts/modules/weather/">Weather</a></li>
+        <li class="sidebar-list-item-2"><a href="/posts/modules/zendesk/">Zendesk</a></li>
       </ul>
     </div>
 
@@ -134,7 +139,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
   
 
-<p>Displays information about your git repositories hosted on Github:</p>
+<p>Displays information about your git repositories hosted on GitHub:</p>
 
 <h4 id="open-review-requests">Open Review Requests</h4>
 
@@ -148,22 +153,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <h2 id="source-code">Source Code</h2>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">wtf/github/</code></pre></div>
-<h2 id="github-required-env-variables">Github Required ENV Variables</h2>
-
-<p><span class="caption">Key:</span> <code>WTF_GITHUB_TOKEN</code> <br />
-<span class="caption">Action:</span> Your <a href="https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization">Github API</a> token.</p>
-
-<h2 id="github-enterprise-required-env-variables">GitHub Enterprise Required ENV Variables</h2>
-
-<p><span class="caption">Key:</span> <code>WTF_GITHUB_TOKEN</code> <br />
-<span class="caption">Action:</span> Your <a href="https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization">Github API</a> token.</p>
-
-<p><span class="caption">Key:</span> <code>WTF_GITHUB_BASE_URL</code> <br />
-<span class="caption">Action:</span> Your <a href="https://developer.github.com/enterprise/2.13/v3/enterprise-admin/">Github Enterprise</a> API URL.</p>
-
-<p><span class="caption">Key:</span> <code>WTF_GITHUB_UPLOAD_URL</code> <br />
-<span class="caption">Action:</span> Your <a href="https://developer.github.com/enterprise/2.13/v3/enterprise-admin/">Github Enterprise</a> upload URL (often the same as API URL).</p>
-
 <h2 id="keyboard-commands">Keyboard Commands</h2>
 
 <p><span class="caption">Key:</span> <code>/</code> <br />
@@ -183,7 +172,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <h2 id="configuration">Configuration</h2>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">github<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apiKey<span class="p">:</span><span class="w"> </span><span class="s2">&#34;3276d7155dd9ee27b8b14f8743a408a9&#34;</span><span class="w">
+</span><span class="w">  </span>baseURL<span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
 </span><span class="w">  </span>enabled<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">  </span>enableStatus<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="w">  </span>position<span class="p">:</span><span class="w">
 </span><span class="w">    </span>top<span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
 </span><span class="w">    </span>left<span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
@@ -193,11 +185,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </span><span class="w">  </span>repositories<span class="p">:</span><span class="w">
 </span><span class="w">    </span>wesker-api<span class="p">:</span><span class="w"> </span><span class="s2">&#34;UmbrellaCorp&#34;</span><span class="w">
 </span><span class="w">    </span>wtf<span class="p">:</span><span class="w"> </span><span class="s2">&#34;senorprogrammer&#34;</span><span class="w">
+</span><span class="w">  </span>uploadURL<span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
 </span><span class="w">  </span>username<span class="p">:</span><span class="w"> </span><span class="s2">&#34;senorprogrammer&#34;</span></code></pre></div>
 <h3 id="attributes">Attributes</h3>
 
+<p><code>apiKey</code> <br />
+Value: Your <a href="https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization">GitHub API</a> token.</p>
+
+<p><code>baseURL</code> <br />
+<em>Optional</em> <br />
+Value: Your <a href="https://developer.github.com/enterprise/2.13/v3/enterprise-admin/">GitHub Enterprise</a> API URL.</p>
+
 <p><code>enabled</code> <br />
-Determines whether or not this module is executed and if its data displayed onscreen. <br />
+Whether or not this module is executed and if its data displayed onscreen. <br />
+Values: <code>true</code>, <code>false</code>.</p>
+
+<p><code>enableStatus</code> <br />
+Display pull request mergeability status (&lsquo;dirty&rsquo;, &lsquo;clean&rsquo;, &lsquo;unstable&rsquo;,
+&lsquo;blocked&rsquo;).<br />
 Values: <code>true</code>, <code>false</code>.</p>
 
 <p><code>position</code> <br />
@@ -208,13 +213,17 @@ How often, in seconds, this module will update its data. <br />
 Values: A positive integer, <code>0..n</code>.</p>
 
 <p><code>repositories</code> <br />
-A list of key/value pairs each describing a Github repository to fetch data
+A list of key/value pairs each describing a GitHub repository to fetch data
 for. <br />
 <span class="caption">Key:</span> The name of the repository. <br />
 <span class="caption">Value:</span> The name of the account or organization that owns the repository.</p>
 
+<p><code>uploadURL</code> <br />
+<em>Optional</em> <br />
+Value: Your <a href="https://developer.github.com/enterprise/2.13/v3/enterprise-admin/">GitHub Enterprise</a> upload URL (often the same as API URL).</p>
+
 <p><code>username</code> <br />
-Your Github username. Used to figure out which review requests you&rsquo;ve
+Your GitHub username. Used to figure out which review requests you&rsquo;ve
 been added to.</p>
 
 </div>

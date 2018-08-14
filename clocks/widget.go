@@ -1,6 +1,7 @@
 package clocks
 
 import (
+	"strings"
 	"time"
 
 	"github.com/senorprogrammer/wtf/wtf"
@@ -14,7 +15,7 @@ type Widget struct {
 
 func NewWidget() *Widget {
 	widget := Widget{
-		TextWidget: wtf.NewTextWidget(" World Clocks ", "clocks", false),
+		TextWidget: wtf.NewTextWidget("World Clocks", "clocks", false),
 	}
 
 	widget.clockColl = widget.buildClockCollection(wtf.Config.UMap("wtf.mods.clocks.locations"))
@@ -35,7 +36,7 @@ func (widget *Widget) buildClockCollection(locData map[string]interface{}) Clock
 	clockColl := ClockCollection{}
 
 	for label, locStr := range locData {
-		timeLoc, err := time.LoadLocation(locStr.(string))
+		timeLoc, err := time.LoadLocation(widget.sanitizeLocation(locStr.(string)))
 		if err != nil {
 			continue
 		}
@@ -44,4 +45,8 @@ func (widget *Widget) buildClockCollection(locData map[string]interface{}) Clock
 	}
 
 	return clockColl
+}
+
+func (widget *Widget) sanitizeLocation(locStr string) string {
+	return strings.Replace(locStr, " ", "_", -1)
 }

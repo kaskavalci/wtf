@@ -7,9 +7,9 @@ import (
 type FocusState int
 
 const (
-	Widget FocusState = iota
-	NonWidget
-	NeverFocused
+	widgetFocused FocusState = iota
+	appBoardFocused
+	neverFocused
 )
 
 // FocusTracker is used by the app to track which onscreen widget currently has focus,
@@ -22,10 +22,50 @@ type FocusTracker struct {
 
 /* -------------------- Exported Functions -------------------- */
 
+// AssignHotKeys assigns an alphabetic keyboard character to each focusable
+// widget so that the widget can be brought into focus by pressing that keyboard key
+func (tracker *FocusTracker) AssignHotKeys() {
+	if !tracker.withShortcuts() {
+		return
+	}
+
+	i := 0
+
+	for _, focusable := range tracker.focusables() {
+		focusable.SetFocusChar(string('a' + i))
+		i++
+	}
+}
+
+func (tracker *FocusTracker) FocusOn(char string) bool {
+	if !tracker.withShortcuts() {
+		return false
+	}
+
+	if tracker.focusState() == appBoardFocused {
+		return false
+	}
+
+	hasFocusable := false
+
+	for idx, focusable := range tracker.focusables() {
+		if focusable.FocusChar() == char {
+			tracker.blur(tracker.Idx)
+			tracker.Idx = idx
+			tracker.focus(tracker.Idx)
+
+			hasFocusable = true
+			break
+		}
+	}
+
+	return hasFocusable
+}
+
 // Next sets the focus on the next widget in the widget list. If the current widget is
 // the last widget, sets focus on the first widget.
 func (tracker *FocusTracker) Next() {
-	if tracker.focusState() == NonWidget {
+	if tracker.focusState() == appBoardFocused {
 		return
 	}
 
@@ -36,7 +76,7 @@ func (tracker *FocusTracker) Next() {
 
 // None removes focus from the currently-focused widget.
 func (tracker *FocusTracker) None() {
-	if tracker.focusState() == NonWidget {
+	if tracker.focusState() == appBoardFocused {
 		return
 	}
 
@@ -46,7 +86,7 @@ func (tracker *FocusTracker) None() {
 // Prev sets the focus on the previous widget in the widget list. If the current widget is
 // the last widget, sets focus on the last widget.
 func (tracker *FocusTracker) Prev() {
-	if tracker.focusState() == NonWidget {
+	if tracker.focusState() == appBoardFocused {
 		return
 	}
 
@@ -70,7 +110,7 @@ func (tracker *FocusTracker) blur(idx int) {
 	view := widget.TextView()
 	view.Blur()
 
-	view.SetBorderColor(ColorFor(widget.BorderColor()))
+	view.SetBorderColor(colorFor(widget.BorderColor()))
 }
 
 func (tracker *FocusTracker) decrement() {
@@ -88,9 +128,10 @@ func (tracker *FocusTracker) focus(idx int) {
 	}
 
 	view := widget.TextView()
+	view.SetBorderColor(colorFor(Config.UString("wtf.colors.border.focused", "gray")))
 
 	tracker.App.SetFocus(view)
-	view.SetBorderColor(ColorFor(Config.UString("wtf.colors.border.focused", "gray")))
+	tracker.App.Draw()
 }
 
 func (tracker *FocusTracker) focusables() []Wtfable {
@@ -113,6 +154,20 @@ func (tracker *FocusTracker) focusableAt(idx int) Wtfable {
 	return tracker.focusables()[idx]
 }
 
+func (tracker *FocusTracker) focusState() FocusState {
+	if tracker.Idx < 0 {
+		return neverFocused
+	}
+
+	for _, widget := range tracker.Widgets {
+		if widget.TextView() == tracker.App.GetFocus() {
+			return widgetFocused
+		}
+	}
+
+	return appBoardFocused
+}
+
 func (tracker *FocusTracker) increment() {
 	tracker.Idx = tracker.Idx + 1
 
@@ -121,19 +176,6 @@ func (tracker *FocusTracker) increment() {
 	}
 }
 
-// widgetHasFocus returns true if one of the widgets currently has the app's focus,
-// false if none of them do (ie: perhaps a modal dialog currently has it instead)
-// If there's no index, it returns true because focus has never been assigned
-func (tracker *FocusTracker) focusState() FocusState {
-	if tracker.Idx < 0 {
-		return NeverFocused
-	}
-
-	for _, widget := range tracker.Widgets {
-		if widget.TextView() == tracker.App.GetFocus() {
-			return Widget
-		}
-	}
-
-	return NonWidget
+func (tracker *FocusTracker) withShortcuts() bool {
+	return Config.UBool("wtf.navigation.shortcuts", true)
 }
