@@ -1,14 +1,13 @@
 package markets
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"text/template"
-
-	"bytes"
 
 	"github.com/senorprogrammer/wtf/wtf"
 )
@@ -65,7 +64,7 @@ func (widget *Widget) get(url string) ([]data, error) {
 		widget.result = fmt.Sprintf("%s", err.Error())
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "curl")
+	req.Header.Set("User-Agent", "Doviz/5.2.0 (com.nokta.Finans-Takip; build:1; iOS 12.1.0) Alamofire/4.7.3")
 	response, err := client.Do(req)
 	if err != nil {
 		widget.result = fmt.Sprintf("%s", err.Error())
