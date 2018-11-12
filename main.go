@@ -6,8 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/senorprogrammer/wtf/markets"
-
 	"github.com/gdamore/tcell"
 	"github.com/olebedev/config"
 	"github.com/pkg/profile"
@@ -37,6 +35,7 @@ import (
 	"github.com/senorprogrammer/wtf/jenkins"
 	"github.com/senorprogrammer/wtf/jira"
 	"github.com/senorprogrammer/wtf/logger"
+	"github.com/senorprogrammer/wtf/markets"
 	"github.com/senorprogrammer/wtf/mercurial"
 	"github.com/senorprogrammer/wtf/newrelic"
 	"github.com/senorprogrammer/wtf/opsgenie"
@@ -209,7 +208,7 @@ func addWidget(app *tview.Application, pages *tview.Pages, widgetName string) {
 	case "jira":
 		widgets = append(widgets, jira.NewWidget(app, pages))
 	case "markets":
-		widgets = append(widgets, markets.NewWidget())
+		widgets = append(widgets, markets.NewWidget(app))
 	case "logger":
 		widgets = append(widgets, logger.NewWidget(app))
 	case "mercurial":

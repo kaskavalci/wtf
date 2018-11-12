@@ -9,6 +9,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/wtf/wtf"
 )
 
@@ -33,9 +34,9 @@ type data struct {
 	Code           string  `json:"code"`
 }
 
-func NewWidget() *Widget {
+func NewWidget(app *tview.Application) *Widget {
 	widget := Widget{
-		TextWidget: wtf.NewTextWidget(" Markets ", "markets", false),
+		TextWidget: wtf.NewTextWidget(app, " Markets ", "markets", false),
 	}
 
 	widget.View.SetWrap(false)
@@ -50,7 +51,6 @@ func (widget *Widget) Refresh() {
 		return
 	}
 
-	widget.UpdateRefreshedAt()
 	widget.update()
 	widget.View.Clear()
 
