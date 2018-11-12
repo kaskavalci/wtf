@@ -2,7 +2,6 @@ package wtf
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/olebedev/config"
 	"github.com/rivo/tview"
@@ -15,19 +14,24 @@ type TextWidget struct {
 	focusable bool
 	focusChar string
 
-	Name        string
-	RefreshedAt time.Time
-	RefreshInt  int
-	View        *tview.TextView
+	Name       string
+	RefreshInt int
+	View       *tview.TextView
 
 	Position
 }
 
-func NewTextWidget(name string, configKey string, focusable bool) TextWidget {
-	widget := TextWidget{
-		enabled:   Config.UBool(fmt.Sprintf("wtf.mods.%s.enabled", configKey), false),
-		focusable: focusable,
+func NewTextWidget(app *tview.Application, name string, configKey string, focusable bool) TextWidget {
+	focusCharValue := Config.UInt(fmt.Sprintf("wtf.mods.%s.focusChar", configKey), -1)
+	focusChar := string('0' + focusCharValue)
+	if focusCharValue == -1 {
+		focusChar = ""
+	}
 
+	widget := TextWidget{
+		enabled:    Config.UBool(fmt.Sprintf("wtf.mods.%s.enabled", configKey), false),
+		focusable:  focusable,
+		focusChar:  focusChar,
 		Name:       Config.UString(fmt.Sprintf("wtf.mods.%s.title", configKey), name),
 		RefreshInt: Config.UInt(fmt.Sprintf("wtf.mods.%s.refreshInterval", configKey)),
 	}
@@ -39,7 +43,7 @@ func NewTextWidget(name string, configKey string, focusable bool) TextWidget {
 		Config.UInt(fmt.Sprintf("wtf.mods.%s.position.height", configKey)),
 	)
 
-	widget.addView()
+	widget.addView(app, configKey)
 
 	return widget
 }
@@ -96,19 +100,37 @@ func (widget *TextWidget) TextView() *tview.TextView {
 
 /* -------------------- Unexported Functions -------------------- */
 
-func (widget *TextWidget) addView() {
+func (widget *TextWidget) addView(app *tview.Application, configKey string) {
 	view := tview.NewTextView()
 
-	view.SetBackgroundColor(colorFor(Config.UString("wtf.colors.background", "black")))
+	view.SetBackgroundColor(ColorFor(
+		Config.UString(fmt.Sprintf("wtf.mods.%s.colors.background", configKey),
+			Config.UString("wtf.colors.background", "black"),
+		),
+	))
+
+	view.SetTextColor(ColorFor(
+		Config.UString(
+			fmt.Sprintf("wtf.mods.%s.colors.text", configKey),
+			Config.UString("wtf.colors.text", "white"),
+		),
+	))
+
+	view.SetTitleColor(ColorFor(
+		Config.UString(
+			fmt.Sprintf("wtf.mods.%s.colors.title", configKey),
+			Config.UString("wtf.colors.title", "white"),
+		),
+	))
+
 	view.SetBorder(true)
-	view.SetBorderColor(colorFor(widget.BorderColor()))
+	view.SetBorderColor(ColorFor(widget.BorderColor()))
+	view.SetChangedFunc(func() {
+		app.Draw()
+	})
 	view.SetDynamicColors(true)
 	view.SetTitle(widget.ContextualTitle(widget.Name))
 	view.SetWrap(false)
 
 	widget.View = view
-}
-
-func (widget *TextWidget) UpdateRefreshedAt() {
-	widget.RefreshedAt = time.Now()
 }

@@ -22,11 +22,11 @@ type Client struct {
 }
 
 // NewClient creates and returns a new Twitter client
-func NewClient(url string) *Client {
+func NewClient() *Client {
 	client := Client{
-		apiBase:    url,
-		screenName: "wtfutil",
-		count:      5,
+		apiBase:    "https://api.twitter.com/1.1/",
+		count:      wtf.Config.UInt("wtf.mods.twitter.count", 5),
+		screenName: "",
 	}
 
 	client.loadAPICredentials()

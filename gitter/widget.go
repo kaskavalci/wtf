@@ -31,7 +31,7 @@ type Widget struct {
 func NewWidget(app *tview.Application, pages *tview.Pages) *Widget {
 	widget := Widget{
 		HelpfulWidget: wtf.NewHelpfulWidget(app, pages, HelpText),
-		TextWidget:    wtf.NewTextWidget("Gitter", "gitter", true),
+		TextWidget:    wtf.NewTextWidget(app, "Gitter", "gitter", true),
 	}
 
 	widget.HelpfulWidget.SetView(widget.View)
@@ -64,7 +64,6 @@ func (widget *Widget) Refresh() {
 	}
 
 	messages, err := GetMessages(room.ID, wtf.Config.UInt("wtf.mods.gitter.numberOfMessages", 10))
-	widget.UpdateRefreshedAt()
 
 	if err != nil {
 		widget.View.SetWrap(true)

@@ -25,20 +25,41 @@ type FocusTracker struct {
 // AssignHotKeys assigns an alphabetic keyboard character to each focusable
 // widget so that the widget can be brought into focus by pressing that keyboard key
 func (tracker *FocusTracker) AssignHotKeys() {
-	if !tracker.withShortcuts() {
+	if !tracker.useNavShortcuts() {
 		return
 	}
 
-	i := 0
+	usedKeys := make(map[string]bool)
+	focusables := tracker.focusables()
+	i := 1
 
-	for _, focusable := range tracker.focusables() {
-		focusable.SetFocusChar(string('a' + i))
+	for _, focusable := range focusables {
+		if focusable.FocusChar() != "" {
+			usedKeys[focusable.FocusChar()] = true
+		}
+	}
+	for _, focusable := range focusables {
+		if focusable.FocusChar() != "" {
+			continue
+		}
+		if _, foundKey := usedKeys[string('0'+i)]; foundKey {
+			for ; foundKey; _, foundKey = usedKeys[string('0'+i)] {
+				i++
+			}
+		}
+
+		// Don't have nav characters > "9"
+		if i >= 10 {
+			break
+		}
+
+		focusable.SetFocusChar(string('0' + i))
 		i++
 	}
 }
 
 func (tracker *FocusTracker) FocusOn(char string) bool {
-	if !tracker.withShortcuts() {
+	if !tracker.useNavShortcuts() {
 		return false
 	}
 
@@ -110,7 +131,7 @@ func (tracker *FocusTracker) blur(idx int) {
 	view := widget.TextView()
 	view.Blur()
 
-	view.SetBorderColor(colorFor(widget.BorderColor()))
+	view.SetBorderColor(ColorFor(widget.BorderColor()))
 }
 
 func (tracker *FocusTracker) decrement() {
@@ -128,7 +149,7 @@ func (tracker *FocusTracker) focus(idx int) {
 	}
 
 	view := widget.TextView()
-	view.SetBorderColor(colorFor(Config.UString("wtf.colors.border.focused", "gray")))
+	view.SetBorderColor(ColorFor(Config.UString("wtf.colors.border.focused", "gray")))
 
 	tracker.App.SetFocus(view)
 	tracker.App.Draw()
@@ -176,6 +197,6 @@ func (tracker *FocusTracker) increment() {
 	}
 }
 
-func (tracker *FocusTracker) withShortcuts() bool {
+func (tracker *FocusTracker) useNavShortcuts() bool {
 	return Config.UBool("wtf.navigation.shortcuts", true)
 }

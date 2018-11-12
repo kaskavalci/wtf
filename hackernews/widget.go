@@ -35,7 +35,7 @@ type Widget struct {
 func NewWidget(app *tview.Application, pages *tview.Pages) *Widget {
 	widget := Widget{
 		HelpfulWidget: wtf.NewHelpfulWidget(app, pages, HelpText),
-		TextWidget:    wtf.NewTextWidget("Hacker News", "hackernews", true),
+		TextWidget:    wtf.NewTextWidget(app, "Hacker News", "hackernews", true),
 	}
 
 	widget.HelpfulWidget.SetView(widget.View)
@@ -79,7 +79,6 @@ func (widget *Widget) Refresh() {
 		widget.stories = stories
 	}
 
-	widget.UpdateRefreshedAt()
 	widget.display()
 }
 

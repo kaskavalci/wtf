@@ -35,7 +35,7 @@ func NewWidget(app *tview.Application, pages *tview.Pages) *Widget {
 	configKey := "weather"
 	widget := Widget{
 		HelpfulWidget: wtf.NewHelpfulWidget(app, pages, HelpText),
-		TextWidget:    wtf.NewTextWidget("Weather", configKey, true),
+		TextWidget:    wtf.NewTextWidget(app, "Weather", configKey, true),
 
 		Idx: 0,
 	}
@@ -73,7 +73,6 @@ func (widget *Widget) Refresh() {
 		widget.Data = widget.Fetch(wtf.ToInts(wtf.Config.UList("wtf.mods.weather.cityids", widget.defaultCityCodes())))
 	}
 
-	widget.UpdateRefreshedAt()
 	widget.display()
 }
 

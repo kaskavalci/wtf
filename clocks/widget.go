@@ -4,21 +4,27 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/wtf/wtf"
 )
 
 type Widget struct {
 	wtf.TextWidget
 
-	clockColl ClockCollection
+	clockColl  ClockCollection
+	dateFormat string
+	timeFormat string
 }
 
-func NewWidget() *Widget {
+func NewWidget(app *tview.Application) *Widget {
 	widget := Widget{
-		TextWidget: wtf.NewTextWidget("World Clocks", "clocks", false),
+		TextWidget: wtf.NewTextWidget(app, "World Clocks", "clocks", false),
 	}
 
 	widget.clockColl = widget.buildClockCollection(wtf.Config.UMap("wtf.mods.clocks.locations"))
+
+	widget.dateFormat = wtf.Config.UString("wtf.mods.clocks.dateFormat", wtf.SimpleDateFormat)
+	widget.timeFormat = wtf.Config.UString("wtf.mods.clocks.timeFormat", wtf.SimpleTimeFormat)
 
 	return &widget
 }
@@ -26,8 +32,7 @@ func NewWidget() *Widget {
 /* -------------------- Exported Functions -------------------- */
 
 func (widget *Widget) Refresh() {
-	widget.UpdateRefreshedAt()
-	widget.display(widget.clockColl.Sorted())
+	widget.display(widget.clockColl.Sorted(), widget.dateFormat, widget.timeFormat)
 }
 
 /* -------------------- Unexported Functions -------------------- */

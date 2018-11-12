@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/wtf/wtf"
 )
 
@@ -16,9 +17,9 @@ type Widget struct {
 	device_token string
 }
 
-func NewWidget() *Widget {
+func NewWidget(app *tview.Application) *Widget {
 	widget := Widget{
-		TextWidget:   wtf.NewTextWidget(" Blockfolio ", "blockfolio", false),
+		TextWidget:   wtf.NewTextWidget(app, "Blockfolio", "blockfolio", false),
 		device_token: wtf.Config.UString("wtf.mods.blockfolio.device_token"),
 	}
 
@@ -28,7 +29,6 @@ func NewWidget() *Widget {
 /* -------------------- Exported Functions -------------------- */
 
 func (widget *Widget) Refresh() {
-	widget.UpdateRefreshedAt()
 	widget.View.SetTitle(" Blockfolio ")
 
 	positions, err := Fetch(widget.device_token)

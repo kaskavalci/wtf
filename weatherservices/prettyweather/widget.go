@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/wtf/wtf"
 )
 
@@ -17,16 +18,15 @@ type Widget struct {
 	language string
 }
 
-func NewWidget() *Widget {
+func NewWidget(app *tview.Application) *Widget {
 	widget := Widget{
-		TextWidget: wtf.NewTextWidget("Pretty Weather", "prettyweather", false),
+		TextWidget: wtf.NewTextWidget(app, "Pretty Weather", "prettyweather", false),
 	}
 
 	return &widget
 }
 
 func (widget *Widget) Refresh() {
-	widget.UpdateRefreshedAt()
 	widget.prettyWeather()
 
 	widget.View.SetText(widget.result)

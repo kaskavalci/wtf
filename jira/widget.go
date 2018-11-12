@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"github.com/senorprogrammer/wtf/wtf"
+	"strconv"
 )
 
 const HelpText = `
@@ -32,12 +33,14 @@ type Widget struct {
 func NewWidget(app *tview.Application, pages *tview.Pages) *Widget {
 	widget := Widget{
 		HelpfulWidget: wtf.NewHelpfulWidget(app, pages, HelpText),
-		TextWidget:    wtf.NewTextWidget("Jira", "jira", true),
+		TextWidget:    wtf.NewTextWidget(app, "Jira", "jira", true),
 	}
 
 	widget.HelpfulWidget.SetView(widget.View)
 	widget.unselect()
 
+	widget.View.SetScrollable(true)
+	widget.View.SetRegions(true)
 	widget.View.SetInputCapture(widget.keyboardIntercept)
 	return &widget
 }
@@ -50,8 +53,6 @@ func (widget *Widget) Refresh() {
 		getProjects(),
 		wtf.Config.UString("wtf.mods.jira.jql", ""),
 	)
-
-	widget.UpdateRefreshedAt()
 
 	if err != nil {
 		widget.result = nil
@@ -75,8 +76,10 @@ func (widget *Widget) display() {
 
 	str := fmt.Sprintf("%s- [green]%s[white]", widget.Name, wtf.Config.UString("wtf.mods.jira.project"))
 
+	widget.View.Clear()
 	widget.View.SetTitle(widget.ContextualTitle(str))
 	widget.View.SetText(fmt.Sprintf("%s", widget.contentFrom(widget.result)))
+	widget.View.Highlight(strconv.Itoa(widget.selected)).ScrollToHighlight()
 }
 
 func (widget *Widget) next() {
@@ -110,7 +113,8 @@ func (widget *Widget) contentFrom(searchResult *SearchResult) string {
 
 	for idx, issue := range searchResult.Issues {
 		fmtStr := fmt.Sprintf(
-			"[%s] [%s]%-6s[white] [green]%-10s[white] [%s]%s",
+			`["%d"][""][%s] [%s]%-6s[white] [green]%-10s[white] [%s]%s`,
+			idx,
 			widget.rowColor(idx),
 			widget.issueTypeColor(&issue),
 			issue.IssueFields.IssueType.Name,
